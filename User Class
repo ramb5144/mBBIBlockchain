@@ -1,0 +1,82 @@
+public class User {
+
+  //This is a userID generated from the blockchain
+  int userID;
+  
+  //Starting credibility
+  double credibility = 0.5;
+  
+  String answer;
+  
+  //Users in the blockchain
+  static int nodes;
+
+  public User(int userID) {
+    this.userID = userID;
+    nodes++;
+  }
+
+  //Formating method
+  private User[] arrConvert(User per1, User per2, User per3) {
+    User[] arr = new User[nodes-1];
+    arr[0] = per1;
+    arr[1] = per2;
+    arr[2] = per3;
+    return arr;
+  }
+
+  //User inputs answers using this method
+  public void inputAnswer(String ans) {
+    answer = ans;
+  }
+
+  public String getAns() {
+    return answer;
+  }
+
+  public double getCredibility() {
+    return credibility;
+  }
+
+  public boolean Correct(User per1, User per2, User per3) {
+    //This is an arbitrary threshold value to decide how much consensus the model must have to determine a user's answers validity
+    double threshold = 0.8;
+    
+    //Temporary value to hold possible validity of answer
+    double value = 0.0;
+    User[] arr = arrConvert(per1, per2, per3);
+    for(int i = 0; i < nodes-1; i++) {
+      if (answer.equals(arr[i].getAns())) {
+        
+        //Increases the value if it matches other answers
+        value += 1.0/(nodes-1)*arr[i].getCredibility();
+      }
+    }
+
+    if (value >= threshold) {
+      return true;
+    } else {
+      return false;
+    }
+    
+  }
+
+  public String Answer(User per1, User per2, User per3) {
+    if (Correct(per1, per2, per3)) {
+      //If user inputs correct answer, credibility increases
+      if (credibility <= 1) {
+        credibility += 0.01;
+      }
+      return answer;
+    } else {
+      //If user inputs incorrect answers, credibility decreases
+      if (credibility >= 0) {
+        credibility -= 0.01;
+      }
+      return null;
+    }
+  }
+  
+}
+
+
